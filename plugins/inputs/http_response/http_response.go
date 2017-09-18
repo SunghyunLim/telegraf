@@ -20,6 +20,7 @@ import (
 // HTTPResponse struct
 type HTTPResponse struct {
 	Address             string
+	Service             string
 	Body                string
 	Method              string
 	ResponseTimeout     internal.Duration
@@ -54,6 +55,9 @@ var sampleConfig = `
 
   ## HTTP Request Method
   # method = "GET"
+  
+  ## address alias name
+  # service = "git.url"
 
   ## Whether to follow redirects from the server (defaults to false)
   # follow_redirects = false
@@ -217,7 +221,7 @@ func (h *HTTPResponse) Gather(acc telegraf.Accumulator) error {
 		return errors.New("Only http and https are supported")
 	}
 	// Prepare data
-	tags := map[string]string{"server": h.Address, "method": h.Method}
+	tags := map[string]string{"server": h.Address, "method": h.Method, "service": h.Service}
 	var fields map[string]interface{}
 
 	if h.client == nil {
